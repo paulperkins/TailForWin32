@@ -1,0 +1,167 @@
+/*
+ * Tail for Win32 - a Windows version of the UNIX 'tail -f' command.
+ * 
+ * Author: Paul Perkins (paul@objektiv.org.uk)
+ * 
+ * Copyright(c)
+ *
+ * This program is free software; you can redistribute it and/or modify it 
+ * under the terms of the GNU General Public License as published by the Free 
+ * Software Foundation; either version 2 of the License, or (at your option) 
+ * any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but 
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for 
+ * more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with 
+ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple 
+ * Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * $Id:$
+ * 
+ */
+
+// Workspace.cpp : implementation file
+//
+
+#include "stdafx.h"
+#include "tail.h"
+#include "Workspace.h"
+
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+// CWorkspace dialog
+
+
+CWorkspace::CWorkspace(CWnd* pParent /*=NULL*/)
+	: CDialog(CWorkspace::IDD, pParent)
+{
+	//{{AFX_DATA_INIT(CWorkspace)
+		// NOTE: the ClassWizard will add member initialization here
+	//}}AFX_DATA_INIT
+
+  m_pTree = NULL;
+  m_htiRoot = 0;
+  m_htiNonWorkspace = 0;
+}
+
+
+void CWorkspace::DoDataExchange(CDataExchange* pDX)
+{
+	CDialog::DoDataExchange(pDX);
+	//{{AFX_DATA_MAP(CWorkspace)
+		// NOTE: the ClassWizard will add DDX and DDV calls here
+	//}}AFX_DATA_MAP
+}
+
+
+BEGIN_MESSAGE_MAP(CWorkspace, CDialog)
+	//{{AFX_MSG_MAP(CWorkspace)
+	ON_WM_SIZE()
+	//}}AFX_MSG_MAP
+END_MESSAGE_MAP()
+
+/////////////////////////////////////////////////////////////////////////////
+// CWorkspace message handlers
+
+BOOL CWorkspace::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext) 
+{
+
+/*	if (!m_Tree.Create (WS_CHILD|WS_VISIBLE|
+		                  TVS_HASLINES|TVS_HASBUTTONS|TVS_LINESATROOT,
+		                  CRect(0, 0, 0, 0), this, 100))
+	{
+		TRACE0("Failed to create instant bar child\n");
+		return -1;		// fail to create
+	}
+
+	m_Tree.ModifyStyleEx(0, WS_EX_CLIENTEDGE); */
+
+
+	return CDialog::Create(IDD, pParentWnd);
+}
+
+BOOL CWorkspace::OnInitDialog() 
+{
+  HTREEITEM htiWS1 = 0;
+
+  CDialog::OnInitDialog();
+
+  m_pTree = (CTreeCtrl*) GetDlgItem (IDC_WORKSPACE_TREE);
+
+  if (m_pTree)
+  {
+	  m_stImageList.Create (IDB_TREE_BUTTONS, 16, 5, RGB(255, 0, 255));
+
+    m_pTree->SetImageList (&m_stImageList, TVSIL_NORMAL);
+
+    m_htiRoot         = AddTreeItem (NULL, _T("Workspaces"), 0, 0, NULL);
+    m_htiNonWorkspace = AddTreeItem (m_htiRoot, _T("Non-Workspace Files"), 1, 1, NULL);
+
+    htiWS1 = AddTreeItem (m_htiRoot, _T("Workspace 1"), 1, 1, NULL);
+    AddTreeItem (htiWS1, _T("File 1"), 4, 4, NULL);
+    AddTreeItem (htiWS1, _T("File 2"), 4, 4, NULL);
+    AddTreeItem (m_htiNonWorkspace, _T("File 3"), 3, 3, NULL);
+    AddTreeItem (m_htiNonWorkspace, _T("File 4"), 3, 3, NULL);
+
+    m_pTree->Expand (m_htiRoot, TVE_EXPAND);
+    m_pTree->Expand (htiWS1, TVE_EXPAND);
+    m_pTree->Expand (m_htiNonWorkspace, TVE_EXPAND);
+  }
+
+	return TRUE;  // return TRUE unless you set the focus to a control
+	              // EXCEPTION: OCX Property Pages should return FALSE
+}
+///////////////////////////////////////////////////////////////////////////////
+// AddTreeItem
+//
+HTREEITEM CWorkspace::AddTreeItem (
+	HTREEITEM	htvParent, 
+	char*		pszText,
+	int			nNormalImage,
+	int			nSelectedImage,
+	void*		pData)
+{
+	TV_INSERTSTRUCT	tvi;
+
+	memset (&tvi, 0, sizeof (TV_INSERTSTRUCT));
+
+	tvi.item.mask = TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
+
+	if (pData)
+	{
+		tvi.item.mask |= TVIF_PARAM;
+		tvi.item.lParam  = (long) pData;
+	} 
+
+	tvi.hParent      = htvParent;
+	tvi.hInsertAfter = TVI_LAST;		  
+	tvi.item.pszText = pszText;
+	tvi.item.cchTextMax = strlen (tvi.item.pszText);
+	tvi.item.iImage  =	nNormalImage; 
+	tvi.item.iSelectedImage  =	nSelectedImage; 
+
+	return m_pTree->InsertItem (&tvi);
+}	
+
+void CWorkspace::OnSize(UINT nType, int cx, int cy) 
+{
+	CRect rc;
+
+	CDialog::OnSize(nType, cx, cy);
+
+  if (m_pTree = (CTreeCtrl*) GetDlgItem (IDC_WORKSPACE_TREE))
+  {
+	  GetClientRect (rc);
+	  rc.DeflateRect (5,5);
+
+	  m_pTree->MoveWindow (rc);	
+  }  
+}

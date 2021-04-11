@@ -1,0 +1,105 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: Tail - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating command line "rc.exe /l 0x809 /fo"Debug/Tail.res" /d "_DEBUG" /d "_AFXDLL" "B:\home_paul\dev\sourceforge\tail\Tail\Tail.rc"" 
+Creating temporary file "C:\DOCUME~1\perkinsp\LOCALS~1\Temp\RSP90.tmp" with contents
+[
+/nologo /MDd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_AFXDLL" /FR"Debug/" /Fp"Debug/Tail.pch" /Yu"stdafx.h" /Fo"Debug/" /Fd"Debug/" /FD /c 
+"B:\home_paul\dev\sourceforge\tail\Tail\MainFrm.cpp"
+"B:\home_paul\dev\sourceforge\tail\Tail\Tail.cpp"
+"B:\home_paul\dev\sourceforge\tail\Tail\TailDoc.cpp"
+"B:\home_paul\dev\sourceforge\tail\Tail\TailView.cpp"
+"B:\home_paul\dev\sourceforge\tail\Tail\Workspace.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\perkinsp\LOCALS~1\Temp\RSP90.tmp" 
+Creating temporary file "C:\DOCUME~1\perkinsp\LOCALS~1\Temp\RSP91.tmp" with contents
+[
+shlwapi.lib /nologo /subsystem:windows /profile /debug /machine:I386 /out:"Debug/Tail.exe" 
+.\Debug\ChildFrm.obj
+.\Debug\CoolDialogBar.obj
+.\Debug\Eventlist.obj
+.\Debug\EventLogThread.obj
+.\Debug\FileReaderThread.obj
+.\Debug\HotListDisplay.obj
+.\Debug\Keywordlist.obj
+.\Debug\MainFrm.obj
+.\Debug\Plugin.obj
+.\Debug\PluginConfig.obj
+.\Debug\RichEditCtrlEx.obj
+.\Debug\Settings.obj
+.\Debug\Splash.obj
+.\Debug\StdAfx.obj
+.\Debug\Tail.obj
+.\Debug\TailDoc.obj
+.\Debug\TailView.obj
+.\Debug\TallyWindow.obj
+.\Debug\utils.obj
+.\Debug\ViewToolbar.obj
+.\Debug\Workspace.obj
+.\Debug\WorkspaceDlg.obj
+.\Debug\WorkspaceListDlg.obj
+.\Debug\XComboList.obj
+.\Debug\XHeaderCtrl.obj
+.\Debug\XListCtrl.obj
+.\Debug\XTreeCtrl.obj
+.\Debug\Tail.res
+]
+Creating command line "link.exe @C:\DOCUME~1\perkinsp\LOCALS~1\Temp\RSP91.tmp"
+<h3>Output Window</h3>
+Compiling resources...
+Compiling...
+Tail.cpp
+TailDoc.cpp
+TailView.cpp
+Workspace.cpp
+Generating Code...
+Compiling...
+MainFrm.cpp
+Generating Code...
+Linking...
+Creating temporary file "C:\DOCUME~1\perkinsp\LOCALS~1\Temp\RSP93.tmp" with contents
+[
+/nologo /o"Debug/Tail.bsc" 
+.\Debug\StdAfx.sbr
+.\Debug\ChildFrm.sbr
+.\Debug\CoolDialogBar.sbr
+.\Debug\Eventlist.sbr
+.\Debug\EventLogThread.sbr
+.\Debug\FileReaderThread.sbr
+.\Debug\HotListDisplay.sbr
+.\Debug\Keywordlist.sbr
+.\Debug\MainFrm.sbr
+.\Debug\Plugin.sbr
+.\Debug\PluginConfig.sbr
+.\Debug\RichEditCtrlEx.sbr
+.\Debug\Settings.sbr
+.\Debug\Splash.sbr
+.\Debug\Tail.sbr
+.\Debug\TailDoc.sbr
+.\Debug\TailView.sbr
+.\Debug\TallyWindow.sbr
+.\Debug\utils.sbr
+.\Debug\ViewToolbar.sbr
+.\Debug\Workspace.sbr
+.\Debug\WorkspaceDlg.sbr
+.\Debug\WorkspaceListDlg.sbr
+.\Debug\XComboList.sbr
+.\Debug\XHeaderCtrl.sbr
+.\Debug\XListCtrl.sbr
+.\Debug\XTreeCtrl.sbr]
+Creating command line "bscmake.exe @C:\DOCUME~1\perkinsp\LOCALS~1\Temp\RSP93.tmp"
+Creating browse info file...
+<h3>Output Window</h3>
+
+
+
+<h3>Results</h3>
+Tail.exe - 0 error(s), 0 warning(s)
+</pre>
+</body>
+</html>
