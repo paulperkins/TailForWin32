@@ -28,7 +28,7 @@
 
 #define LOGFILE       "tail.log"
 
-static bDebug = FALSE;
+static BOOL bDebug = FALSE;
 
 char* GetAppPath (
   char* pszPath)
