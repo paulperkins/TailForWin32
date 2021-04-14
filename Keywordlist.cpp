@@ -84,7 +84,7 @@ CKeywordListItem::CKeywordListItem (const char* pszKeyword, BOOL bActive)
   m_dwCount = 0; 
   m_crColour = RGB (255, 0, 0);
 
-  strcpy (m_szKeyword, pszKeyword);
+  strcpy_s (m_szKeyword, sizeof (m_szKeyword), pszKeyword);
  
   m_pPlugins = new CObList;
 }
@@ -98,7 +98,7 @@ CKeywordListItem::CKeywordListItem (
   m_dwCount = 0; 
   m_crColour = cr;
 
-  strcpy (m_szKeyword, pszKeyword);
+  strcpy_s (m_szKeyword, sizeof(m_szKeyword), pszKeyword);
  
   m_pPlugins = new CObList;
 }
@@ -389,12 +389,10 @@ BOOL CKeywordList::LoadFile (
   long lNumKeywords = 0;
 
   // PP: Change this to be a parameter to function.
-  GetAppPath (szConfigFile);  
-  strcat (szConfigFile, KEYWORD_FILE);
+  GetAppPath (szConfigFile, sizeof (szConfigFile));  
+  strcat_s (szConfigFile, sizeof (szConfigFile), KEYWORD_FILE);
 
-  fp = fopen (szConfigFile, "r");
-
-  if (fp == NULL)
+  if (!fopen_s (&fp, szConfigFile, "r"))
   {
     LogMessage ("Could not open keyword file '%s'", szConfigFile);
     return FALSE;
@@ -446,9 +444,9 @@ BOOL CKeywordList::LoadFile (
 //      ppszList[i] = (char*) malloc (sizeof (szLine));
 //      *ppszList[i] = '\0';
 
-//      strcpy (pstKeywordList[i].szKeyword, szLine);
+//      strcpy_s (pstKeywordList[i].szKeyword, szLine);
 //      pstKeywordList[i].bExclude = TRUE;
-//      strcpy (ppszList[i++], szLine);
+//      strcpy_s (ppszList[i++], szLine);
 
       pKeyword = AddKeyword (szLine);
 
@@ -464,9 +462,11 @@ BOOL CKeywordList::LoadFile (
 
   fclose (fp);
 
-  sprintf (szText, "The keyword file '%s' has now been imported.\n"
-                   "The file can safely be deleted.\n", 
-                   szConfigFile);
+  sprintf_s (szText,
+                sizeof (szText),
+                "The keyword file '%s' has now been imported.\n"
+                "The file can safely be deleted.\n", 
+                szConfigFile);
 
   ::AfxMessageBox (szText);
 
@@ -506,7 +506,7 @@ BOOL CKeywordList::Load (
 
       for (int i = 0; i < lNumKeys; i++)
       {
-        sprintf (szKey, "Keyword %ld", i);
+        sprintf_s (szKey, sizeof (szKey), "Keyword %ld", i);
 
         if (ERROR_SUCCESS == RegOpenKey (hKey, szKey, &hSubKey))
         {
@@ -600,8 +600,8 @@ BOOL CKeywordList::Save (
       {
         pKeyword = FindKeyword(i);
 
-        sprintf (szKey, "Keyword %ld", i);
-        strcpy (szValue, pKeyword->Keyword());
+        sprintf_s (szKey, sizeof (szKey), "Keyword %ld", i);
+        strcpy_s (szValue, sizeof (szValue), pKeyword->Keyword());
         
         RegSetValueEx (hKey, szKey, NULL, REG_SZ, (LPBYTE) &szValue[0], sizeof (szValue));              
 
@@ -609,7 +609,7 @@ BOOL CKeywordList::Save (
         {
           memset (&szLine[0], 0, sizeof (szLine));
 
-          strcpy (szLine, pKeyword->Keyword());
+          strcpy_s (szLine, sizeof (szLine), pKeyword->Keyword());
           dwSize = sizeof (szLine);
 
           RegSetValueEx (hSubKey, "Keyword", NULL, REG_SZ, (LPBYTE) &szLine[0], dwSize);
@@ -628,12 +628,12 @@ BOOL CKeywordList::Save (
 
             while (pPlugin = pKeyword->FindPlugin (j))
             {
-              sprintf (szKey, "Plugin %ld", j);
-              strcpy (szValue, pPlugin->GetShortName());
+              sprintf_s (szKey, sizeof (szKey), "Plugin %ld", j);
+              strcpy_s (szValue, sizeof (szValue), pPlugin->GetShortName());
               
               RegSetValueEx (hSubSubKey, szKey, NULL, REG_SZ, (LPBYTE) &szValue[0], sizeof (szValue));              
 
-              strcpy (szKey, pPlugin->GetShortName());
+              strcpy_s (szKey, sizeof (szKey), pPlugin->GetShortName());
 
               if (ERROR_SUCCESS == RegCreateKey (hSubSubKey, szKey, &hSubSubSubKey))
               {
@@ -646,8 +646,8 @@ BOOL CKeywordList::Save (
               j++;
             }
 
-            strcpy (szKey, "NumPlugins");
-            sprintf (szValue, "%ld", j);
+            strcpy_s (szKey, sizeof (szKey), "NumPlugins");
+            sprintf_s (szValue, sizeof (szValue), "%ld", j);
             
             RegSetValueEx (hSubSubKey, szKey, NULL, REG_SZ, (LPBYTE) &szValue[0], sizeof (szValue));              
           }

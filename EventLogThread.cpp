@@ -42,41 +42,42 @@ extern BOOL InsertText (
 
 void GetEventLogType (
   unsigned short uEventType,
-  char* pszType)
+  char* pszType,
+  size_t uiBufSize)
 {
   switch (uEventType)
   {
   case EVENTLOG_SUCCESS:
-    sprintf (pszType, "EVENTLOG_SUCCESS");
+    sprintf_s (pszType, uiBufSize, "EVENTLOG_SUCCESS");
     break;
 
   case EVENTLOG_ERROR_TYPE:
-    sprintf (pszType, "EVENTLOG_ERROR_TYPE");
+    sprintf_s (pszType, uiBufSize, "EVENTLOG_ERROR_TYPE");
 
     break;
   
   case EVENTLOG_WARNING_TYPE:
-    sprintf (pszType, "EVENTLOG_WARNING_TYPE");
+    sprintf_s (pszType, uiBufSize, "EVENTLOG_WARNING_TYPE");
 
     break;
   
   case EVENTLOG_INFORMATION_TYPE:
-    sprintf (pszType, "EVENTLOG_INFORMATION_TYPE");
+    sprintf_s (pszType, uiBufSize, "EVENTLOG_INFORMATION_TYPE");
 
     break;
   
   case EVENTLOG_AUDIT_SUCCESS:
-    sprintf (pszType, "EVENTLOG_AUDIT_SUCCESS");
+    sprintf_s (pszType, uiBufSize, "EVENTLOG_AUDIT_SUCCESS");
 
     break;
   
   case EVENTLOG_AUDIT_FAILURE:
-    sprintf (pszType, "EVENTLOG_AUDIT_FAILURE");
+    sprintf_s (pszType, uiBufSize, "EVENTLOG_AUDIT_FAILURE");
 
     break;
 
   default:
-    sprintf (pszType, "UNKNOWN");
+    sprintf_s (pszType, uiBufSize, "UNKNOWN");
 
     break;
 
@@ -149,7 +150,7 @@ UINT EventLogThread (
 
   GetComputerName (szComputerName, &dwCNBufferSize);
 
-  sprintf (szUNCComputerName, "\\\\%s", szComputerName);
+  sprintf_s (szUNCComputerName, sizeof(szUNCComputerName), "\\\\%s", szComputerName);
 
   LogMessage ("Computer name is %s", szUNCComputerName);
 
@@ -431,19 +432,19 @@ UINT EventLogThread (
         strncpy (pszData, (LPSTR)((LPBYTE)pBuffer + pBuffer->DataOffset), pBuffer->DataLength);
       } */
 
-      GetTimeStamp ((time_t*)&pBuffer->TimeWritten, szTimestamp);
-      GetEventLogType (pBuffer->EventType, szType);
+      GetTimeStamp ((time_t*)&pBuffer->TimeWritten, szTimestamp, sizeof (szTimestamp));
+      GetEventLogType (pBuffer->EventType, szType, sizeof (szType));
 
-      strcpy (szSource, (LPSTR)((LPBYTE)pBuffer + sizeof (EVENTLOGRECORD)));
+      strcpy_s (szSource, sizeof(szSource), (LPSTR)((LPBYTE)pBuffer + sizeof (EVENTLOGRECORD)));
 
       if (pBuffer->NumStrings > 0)
       {
-        strncpy (szStrings, (LPSTR) ((LPBYTE)pBuffer + pBuffer->StringOffset), sizeof (szStrings) - 1);
+        strncpy_s (szStrings, sizeof(szStrings), (LPSTR) ((LPBYTE)pBuffer + pBuffer->StringOffset), sizeof (szStrings) - 1);
 
         szStrings[sizeof (szStrings) - 1] = '\0';
       }
 
-      sprintf (szNewEntry, "%s %s %s %ld [%s]\n", 
+      sprintf_s (szNewEntry, sizeof(szNewEntry), "%s %s %s %ld [%s]\n",
                 szTimestamp, szType, szSource, pBuffer->EventID, szStrings);
 
 /*      if (pBuffer->DataLength > 0)

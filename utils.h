@@ -30,11 +30,13 @@ BOOL DebugFilePresent (
   void);
 
 void GetTimeStamp (
-  char* pszBuf);
+  char* pszBuf,
+  size_t uiBufSize);
 
 void GetTimeStamp (
   time_t* pstTime,
-  char*   pszBuf);
+  char*   pszBuf,
+  size_t uiBufSize);
 
 void LogMessage (
   char* pszMessage,
@@ -50,7 +52,8 @@ void LogDebugMessage (
   ...);
 
 char* GetAppPath (
-  char* pszPath);
+  char* pszPath,
+  size_t uiBufSize);
 
 BOOL FormatTime (
   char* pszBuffer,

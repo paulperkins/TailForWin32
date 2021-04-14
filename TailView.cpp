@@ -250,7 +250,7 @@ int CTailView::OnCreate(LPCREATESTRUCT lpCreateStruct)
     // Set up some defaults.
     m_ctlEdit.GetDefaultCharFormat (cf);
 
-    strcpy (cf.szFaceName, "Courier New");
+    strcpy_s (cf.szFaceName, sizeof(cf.szFaceName), "Courier New");
     cf.dwMask |= CFM_FACE | CFM_BOLD;
     cf.dwEffects = cf.dwEffects & ~CFE_BOLD ;
     m_ctlEdit.SetDefaultCharFormat (cf);
@@ -282,7 +282,7 @@ void CTailView::SetViewFont (
 
   stFormat.bCharSet = pstLogFont->lfCharSet; 
   stFormat.bPitchAndFamily = pstLogFont->lfPitchAndFamily;     
-  strcpy (stFormat.szFaceName, pstLogFont->lfFaceName);     
+  strcpy_s (stFormat.szFaceName, sizeof(stFormat.szFaceName), pstLogFont->lfFaceName);
 
   stFormat.dwMask |= CFM_UNDERLINE | CFM_BOLD | CFM_ITALIC | CFM_FACE;
 
@@ -345,11 +345,11 @@ void CTailView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 
   pDoc = (CTailDoc*) GetDocument ();
 
-  sprintf (m_szDieEvent, "%s%08ld", DIE_EVENT_NAME, (DWORD)(void*) this);
+  sprintf_s (m_szDieEvent, sizeof (m_szDieEvent), "%s%08ld", DIE_EVENT_NAME, (DWORD)(void*) this);
 
-  strcpy (m_szTailFile, pDoc->m_strTailFile); 
+  strcpy_s (m_szTailFile, sizeof(m_szTailFile), pDoc->m_strTailFile);
 
-  strcpy (m_stParams.szFileName, m_szTailFile); 
+  strcpy_s (m_stParams.szFileName, sizeof(m_stParams.szFileName), m_szTailFile);
 
   m_stParams.hEdit = m_ctlEdit.GetSafeHwnd ();
   m_stParams.bUseTimeout = m_bUseTimeout;
@@ -357,11 +357,11 @@ void CTailView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
   m_stParams.bIgnoreHotStartup = m_pSettings->GetIgnoreHotStartup ();
   m_stParams.pView = this;
   m_stParams.bDebug = m_pSettings->GetDebug ();
-  strcpy (m_stParams.szDieEvent, m_szDieEvent);
-  strcpy (m_stParams.szReloadEvent, RELOAD_EVENT_NAME);
+  strcpy_s (m_stParams.szDieEvent, sizeof(m_stParams.szDieEvent), m_szDieEvent);
+  strcpy_s (m_stParams.szReloadEvent, sizeof(m_stParams.szReloadEvent), RELOAD_EVENT_NAME);
   m_stParams.bPaused = FALSE;
 
-/*  strcpy (m_stELParams.szFileName, pDoc->m_strTailFile); 
+/*  strcpy_s (m_stELParams.szFileName, pDoc->m_strTailFile); 
 
   m_stELParams.hEdit = m_ctlEdit.GetSafeHwnd ();
   m_stELParams.bUseTimeout = m_bUseTimeout;
@@ -369,7 +369,7 @@ void CTailView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
   m_stELParams.bIgnoreHotStartup = pSettings->GetIgnoreHotStartup ();
   m_stELParams.pView = this;
   m_stELParams.bDebug = pSettings->GetDebug ();
-  strcpy (m_stELParams.szDieEvent, m_szDieEvent);
+  strcpy_s (m_stELParams.szDieEvent, m_szDieEvent);
   m_stELParams.bPaused = FALSE; */
 
   if (!m_pThread && !pDoc->m_strTailFile.IsEmpty ())
@@ -429,7 +429,7 @@ void CTailView::Refresh ()
 
   if (hFile == INVALID_HANDLE_VALUE)
   {
-    sprintf (szMsg, "Could not open '%s'.", m_szTailFile);
+    sprintf_s (szMsg, sizeof (szMsg), "Could not open '%s'.", m_szTailFile);
     ::MessageBox (AfxGetMainWnd()->GetSafeHwnd(), szMsg, "Tail for Win32", MB_OK | MB_ICONSTOP);
 
     return;
@@ -488,14 +488,14 @@ void UpdateStatusBar (
   char szBuf[1024] = "";
   char szTS[1024] = "";
 
-  GetTimeStamp (szTS);
+  GetTimeStamp (szTS, sizeof (szTS));
 
-  sprintf (szBuf, "Last updated: %s", szTS);
+  sprintf_s (szBuf, sizeof (szBuf), "Last updated: %s", szTS);
   pStatus->SetText (szBuf, 0, 0);
 
   if (bMatch)
   {
-    sprintf (szBuf, "Last match: %s Total matches: %ld", szTS, lMatches);
+    sprintf_s (szBuf, sizeof (szBuf), "Last match: %s Total matches: %ld", szTS, lMatches);
     pStatus->SetText (szBuf, 1, 0);  
   }
 }
@@ -591,7 +591,7 @@ BOOL InsertText (
 
   CTailApp* theApp = (CTailApp*) AfxGetApp ();
 
-  GetTimeStamp (szTS);
+  GetTimeStamp (szTS, sizeof (szTS));
 
   if (!bDoColouring)
   {
@@ -647,12 +647,12 @@ BOOL InsertText (
     {
       // Take off the CR+LF.
       lLineLen = MIN ((sizeof (szLine) - 1), (pszLineEnd - pszPtr + 1)) - 2;
-      strncpy (szLine, pszPtr, MIN ((sizeof (szLine) - 1), (pszLineEnd - pszPtr + 1)));
+      strncpy_s (szLine, sizeof (szLine), pszPtr, MIN ((sizeof (szLine) - 1), (pszLineEnd - pszPtr + 1)));
     }
     else
     {
       lLineLen = MIN ((sizeof (szLine) - 1), (strlen (pszPtr)));
-      strncpy (szLine, pszPtr, MIN ((sizeof (szLine) - 1), (strlen (pszPtr))));
+      strncpy_s (szLine, sizeof (szLine), pszPtr, MIN ((sizeof (szLine) - 1), (strlen (pszPtr))));
 
       bEnd = TRUE;
     }
@@ -666,7 +666,7 @@ BOOL InsertText (
         {
           memset (&szLineBuffer[0], ' ', LINE_PAD);
 
-          strncpy (szLineBuffer, szLine, lLineLen);
+          strncpy_s (szLineBuffer, sizeof (szLineBuffer), szLine, lLineLen);
 
           if (pszLineEnd)
           {
@@ -681,12 +681,12 @@ BOOL InsertText (
         }
         else
         {
-          strcpy (szLineBuffer, szLine);
+          strcpy_s (szLineBuffer, sizeof(szLineBuffer), szLine);
         }
       }
       else
       {
-          strcpy (szLineBuffer, szLine);      
+          strcpy_s (szLineBuffer, sizeof(szLineBuffer), szLine);
       }
 
 //      LogMessage ("Writing '%s'", szLineBuffer);
@@ -738,7 +738,7 @@ BOOL InsertText (
           // We've got another match.
           (*plMatchCount)++;
           pstKeywords[iIndex].dwMatches++;
-          strcpy (pstKeywords[iIndex].szTimestamp, szTS);
+          strcpy_s (pstKeywords[iIndex].szTimestamp, sizeof(pstKeywords[iIndex].szTimestamp), szTS);
 
           // Call the event associated with this keyword.
 //          FireEvent (pView, *ppszKeywords, szLine);
@@ -751,7 +751,7 @@ BOOL InsertText (
             {
               memset (&szLineBuffer[0], ' ', LINE_PAD);
 
-              strncpy (szLineBuffer, szLine, strlen (szLine));
+              strncpy_s (szLineBuffer, sizeof(szLineBuffer), szLine, strlen (szLine));
 
               szLineBuffer[LINE_PAD - 1] = '\0';
             }
@@ -888,10 +888,11 @@ void ScrollToBottom (
   ::SendMessage (hwnd, WM_VSCROLL, (WPARAM) SB_BOTTOM, 0);
 
   /* 4.1.2 Added version check to fix W2K bug in RichEdit control. */
-  if (! ((theApp->m_fVersion >= 5.0) && (theApp->m_dwPlatformID == VER_PLATFORM_WIN32_NT)) ) // Warlock, scroll to bottom, compiled with MSVC2002, tested on Win2K-SP? and WinXP-SP1
+  ::SendMessage(hwnd, WM_VSCROLL, (WPARAM)SB_PAGEUP, (LPARAM)0);
+/*  if (! ((theApp->m_fVersion >= 5.0) && (theApp->m_dwPlatformID == VER_PLATFORM_WIN32_NT)) ) // Warlock, scroll to bottom, compiled with MSVC2002, tested on Win2K-SP? and WinXP-SP1
   {
     ::SendMessage (hwnd, WM_VSCROLL, (WPARAM) SB_PAGEUP, (LPARAM) 0); 
-  }
+  }*/
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -928,14 +929,14 @@ void CTailView::ReloadKeywords (
 
     while (i < lKeywordCount)
     {
-      strcpy (szLine, m_pSettings->FindKeyword(i)->Keyword());
+      strcpy_s (szLine, sizeof (szLine), m_pSettings->FindKeyword(i)->Keyword());
 
       ppszNewList[i] = (char*) malloc (sizeof (szLine));
       *ppszNewList[i] = '\0';
 
-      strcpy (pstNewKeywordList[i].szKeyword, szLine);
+      strcpy_s (pstNewKeywordList[i].szKeyword, sizeof(pstNewKeywordList[i].szKeyword), szLine);
       pstNewKeywordList[i].bExclude = TRUE;
-      strcpy (ppszNewList[i], szLine);
+      strcpy_s (ppszNewList[i], sizeof (ppszNewList[i]), szLine);
 
       // Copy the previous list members.
       if (m_ppszList)
@@ -947,7 +948,7 @@ void CTailView::ReloadKeywords (
             if (strcmp (m_ppszList[j], pstNewKeywordList[i].szKeyword) == 0)
             {
               pstNewKeywordList[i].dwMatches = m_pstKeywordList[i].dwMatches;
-              strcpy (pstNewKeywordList[i].szTimestamp, m_pstKeywordList[i].szTimestamp);
+              strcpy_s (pstNewKeywordList[i].szTimestamp, sizeof (pstNewKeywordList[i].szTimestamp), m_pstKeywordList[i].szTimestamp);
             }
           }
         }
@@ -1014,14 +1015,15 @@ void CTailView::LoadKeywords (
 
     while (i < m_lNumKeywords)
     {
-      strcpy (szLine, m_pSettings->FindKeyword(i)->Keyword());
+      strcpy_s (szLine, sizeof (szLine), m_pSettings->FindKeyword(i)->Keyword());
 
       m_ppszList[i] = (char*) malloc (sizeof (szLine));
       *m_ppszList[i] = '\0';
 
-      strcpy (m_pstKeywordList[i].szKeyword, szLine);
+      strcpy_s (m_pstKeywordList[i].szKeyword, sizeof (m_pstKeywordList[i].szKeyword), szLine);
       m_pstKeywordList[i].bExclude = TRUE;
-      strcpy (m_ppszList[i++], szLine);
+      strcpy_s (m_ppszList[i++], sizeof(szLine), szLine); // Noting that we're assuming that the list element size is equal to the line size.
+
     }
   }
 }
@@ -1037,18 +1039,18 @@ BOOL CTailView::LoadPlugins (
 	long hFind = 0;
   CPlugin* pPlugin = NULL;
 
-  GetAppPath (szAppPath);
+  GetAppPath (szAppPath, sizeof (szAppPath));
 
-  strcat (szAppPath, PLUGIN_DIR);
+  strcat_s (szAppPath, sizeof(szAppPath), PLUGIN_DIR);
 
   LogMessage ("Looking for plugins in '%s'", szAppPath);
 
-  sprintf (szFileSpec, "%s*.%s", szAppPath, PLUGIN_EXT);
+  sprintf_s (szFileSpec, sizeof(szFileSpec), "%s*.%s", szAppPath, PLUGIN_EXT);
 
   // Get the first file.
 	if (-1L != (hFind = _findfirst (szFileSpec, &file_info)))
 	{
-    sprintf (szPlugin, "%s%s", szAppPath, file_info.name);
+    sprintf_s (szPlugin, sizeof(szPlugin), "%s%s", szAppPath, file_info.name);
 
     pPlugin = new CPlugin;
 
@@ -1068,7 +1070,7 @@ BOOL CTailView::LoadPlugins (
 		{
       pPlugin = new CPlugin;
 
-      sprintf (szPlugin, "%s%s", szAppPath, file_info.name);
+      sprintf_s (szPlugin, sizeof(szPlugin), "%s%s", szAppPath, file_info.name);
 
       LogMessage ("Loading plugin at '%s'", szPlugin);
 
@@ -1127,7 +1129,7 @@ void CTailView::OnSetfont()
   
   lf.lfCharSet = stCF.bCharSet;
   lf.lfPitchAndFamily = stCF.bPitchAndFamily;
-  strcpy (lf.lfFaceName, stCF.szFaceName); 
+  strcpy_s (lf.lfFaceName, sizeof (lf.lfFaceName), stCF.szFaceName);
 
   stFontDlg.m_cf.Flags |= CF_INITTOLOGFONTSTRUCT;
   stFontDlg.m_cf.lpLogFont = &lf;
@@ -1142,7 +1144,7 @@ void CTailView::OnSetfont()
 
     stCF.bCharSet = stFontDlg.m_cf.lpLogFont->lfCharSet;     
     stCF.bPitchAndFamily = stFontDlg.m_cf.lpLogFont->lfPitchAndFamily;
-    strcpy (stCF.szFaceName, stFontDlg.m_cf.lpLogFont->lfFaceName); 
+    strcpy_s (stCF.szFaceName, sizeof (stCF.szFaceName), stFontDlg.m_cf.lpLogFont->lfFaceName);
 
     stCF.dwMask |= CFM_UNDERLINE | CFM_BOLD | CFM_ITALIC | CFM_FACE;
 

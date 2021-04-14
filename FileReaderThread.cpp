@@ -471,8 +471,8 @@ UINT ReaderThread (
 //  strcpy (gszFileName, parms->szFileName);
 
 // Get the path of the file, and monitor the directory it is in for changes. (!)
-  _splitpath (parms->szFileName, szDrive, szPath, NULL, NULL);
-  _makepath (szNewPath, szDrive, szPath, NULL, NULL);
+  _splitpath_s (parms->szFileName, szDrive, sizeof (szDrive), szPath, sizeof (szPath), NULL, 0, NULL, 0);
+  _makepath_s (szNewPath, sizeof (szNewPath), szDrive, szPath, NULL, NULL);
 
   pView = parms->pView;
 
@@ -480,7 +480,7 @@ UINT ReaderThread (
 
   // Determine the type of the drive. If it is not local, then
   // we cannot use file change notifications.
-  _splitpath (szNewPath, szDrive, NULL, NULL, NULL);
+  _splitpath_s (szNewPath, szDrive, sizeof (szDrive), NULL, 0, NULL, 0, NULL, 0);
 
   uiFlags = GetDriveType (szDrive);
 
@@ -569,7 +569,7 @@ UINT ReaderThread (
   bPaused = parms->bPaused;
   nTimeout = parms->nTimeout;
   hwndEdit = parms->hEdit;
-  strcpy (szFileName, parms->szFileName);
+  strcpy_s (szFileName, sizeof(szFileName), parms->szFileName);
 
   // Set up the wait event array.
   haEvents[0] = hDie;

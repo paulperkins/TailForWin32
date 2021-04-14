@@ -54,10 +54,10 @@ class CPlugin
 public:
   CPlugin ()
   {
-    strcpy (szFilename, "");
-    strcpy (szShortName, "");
-    strcpy (szName, "");
-    strcpy (szDescription, "");
+    strcpy_s (szFilename, sizeof (szFilename), "");
+    strcpy_s (szShortName, sizeof (szShortName), "");
+    strcpy_s (szName, sizeof (szName), "");
+    strcpy_s (szDescription, sizeof (szDescription), "");
     nNumKeywords = 0;
     hModule = 0;
     pProcessFn = NULL;

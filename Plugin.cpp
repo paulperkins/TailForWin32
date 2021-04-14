@@ -103,7 +103,7 @@ BOOL CPlugin::Load (
 //  pPlugin = new CPlugin;
 
   hModule = hMod;
-  strcpy (szFilename, pszPlugin);
+  strcpy_s (szFilename, sizeof (szFilename), pszPlugin);
 
   if (!GetMethods ())
   {
@@ -281,18 +281,18 @@ BOOL CPluginList::Load (
 
   CTailApp* pApp = (CTailApp*) AfxGetApp ();
 
-  GetAppPath (szAppPath);
+  GetAppPath (szAppPath, sizeof (szAppPath));
 
-  strcat (szAppPath, PLUGIN_DIR);
+  strcat_s (szAppPath, sizeof (szAppPath), PLUGIN_DIR);
 
   LogMessage ("Looking for plugins in '%s'", szAppPath);
 
-  sprintf (szFileSpec, "%s*.%s", szAppPath, PLUGIN_EXT);
+  sprintf_s (szFileSpec, sizeof (szFileSpec), "%s*.%s", szAppPath, PLUGIN_EXT);
 
   // Get the first file.
 	if (-1L != (hFind = _findfirst (szFileSpec, &file_info)))
 	{
-    sprintf (szPlugin, "%s%s", szAppPath, file_info.name);
+    sprintf_s (szPlugin, sizeof (szPlugin), "%s%s", szAppPath, file_info.name);
 
     pPlugin = new CPlugin;
 
@@ -312,7 +312,7 @@ BOOL CPluginList::Load (
 		{
       pPlugin = new CPlugin;
 
-      sprintf (szPlugin, "%s%s", szAppPath, file_info.name);
+      sprintf_s (szPlugin, sizeof (szPlugin), "%s%s", szAppPath, file_info.name);
 
       LogMessage ("Loading plugin at '%s'", szPlugin);
 

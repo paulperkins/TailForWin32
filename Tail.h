@@ -66,8 +66,6 @@ public:
 	CTailApp();
 	~CTailApp();
 
-  DWORD VersionCheck (void);
-
   CSettings* GetSettings (void);
 
   float m_fVersion;
@@ -131,7 +129,8 @@ void LogMessage (
   ...);
 
 char* GetAppPath (
-  char* pszPath);
+  char* pszPath,
+  size_t uiBufSize);
 
 
 /////////////////////////////////////////////////////////////////////////////

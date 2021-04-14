@@ -317,7 +317,7 @@ LRESULT CHotListDisplay::OnComboSelection(WPARAM nItem, LPARAM nSubItem)
 
   if (pKeyword = (CKeywordListItem*) m_List.GetItemData (nItem))
   {
-    strcpy (szText, m_List.GetComboText (nItem, nSubItem));
+    strcpy_s (szText, sizeof (szText), m_List.GetComboText (nItem, nSubItem));
 
     if (strcmp (szText, "Red") == 0)
     {

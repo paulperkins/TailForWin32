@@ -31,7 +31,8 @@
 static BOOL bDebug = FALSE;
 
 char* GetAppPath (
-  char* pszPath)
+  char* pszPath,
+  size_t uiBufSize)
 {
   char szDrive[_MAX_DRIVE] = "";
   char szPath[_MAX_PATH] = "";
@@ -39,8 +40,8 @@ char* GetAppPath (
 
   GetModuleFileName (AfxGetApp ()->m_hInstance, szAppPath, _MAX_PATH);
 
-  _splitpath (szAppPath, szDrive, szPath, NULL, NULL);
-  _makepath (pszPath, szDrive, szPath, NULL, NULL);
+  _splitpath_s (szAppPath, szDrive, sizeof (szDrive), szPath, sizeof (szPath), NULL, 0, NULL, 0);
+  _makepath_s (pszPath, uiBufSize, szDrive, szPath, NULL, NULL);
 
   return pszPath;
 }
@@ -52,11 +53,11 @@ BOOL DebugFilePresent (
 
   char szPath[_MAX_PATH] = "";
 
-  GetAppPath (szPath);
+  GetAppPath (szPath, sizeof (szPath));
 
-  strcat (szPath, LOGFILE);
+  strcat_s (szPath, sizeof (szPath), LOGFILE);
 
-  if (fp = fopen (szPath, "r"))
+  if (!fopen_s (&fp, szPath, "r"))
   {
     fclose (fp);
 
@@ -68,37 +69,53 @@ BOOL DebugFilePresent (
   return FALSE;
 }
 
+
 void GetTimeStamp (
   time_t* pstTime,
-  char*   pszBuf)
+  char*   pszBuf,
+  size_t uiBufSize)
 {
-	struct tm *newtime;
+	struct tm newtime;
 
-	newtime = localtime (pstTime); 
+	if (localtime_s(&newtime, pstTime))
+	{
+		sprintf_s (pszBuf, uiBufSize, "<ERROR>");
 
-	sprintf (pszBuf, "%02d/%02d/%04d %02d:%02d:%02d", 
-        newtime->tm_mday,
-        newtime->tm_mon,
-        newtime->tm_year + 1900,
-				newtime->tm_hour,
-				newtime->tm_min,
-				newtime->tm_sec);
+	}
+	else
+	{
+		sprintf_s (pszBuf, uiBufSize, "%02d/%02d/%04d %02d:%02d:%02d",
+			newtime.tm_mday,
+			newtime.tm_mon,
+			newtime.tm_year + 1900,
+			newtime.tm_hour,
+			newtime.tm_min,
+			newtime.tm_sec);
+	}
 }
 
 void GetTimeStamp (
-  char* pszBuf)
+  char*  pszBuf,
+  size_t uiBufSize)
 {
-	struct tm *newtime;
+	struct tm newtime;
 	time_t aclock;
 
-  time (&aclock);                
+	time (&aclock);                
 
-	newtime = localtime (&aclock); 
-
-	sprintf (pszBuf, "%02d:%02d:%02d", 
-				newtime->tm_hour,
-				newtime->tm_min,
-				newtime->tm_sec);
+	if (localtime_s (&newtime, &aclock))
+	{
+		sprintf_s (pszBuf, uiBufSize,
+			"<ERROR>");
+	}
+	else
+	{
+		sprintf_s (pszBuf, uiBufSize,
+			"%02d:%02d:%02d",
+			newtime.tm_hour,
+			newtime.tm_min,
+			newtime.tm_sec);
+	}
 }
 
 /******************************************************************************
@@ -113,43 +130,49 @@ void LogMessage (
   char szOut[1024] = "";
   char szLine[2048] = "";
   va_list ap;
-	struct tm *newtime;
+	struct tm newtime;
 	time_t aclock;
   char szPath[_MAX_PATH] = "";
 
-  GetAppPath (szPath);
+  GetAppPath (szPath, sizeof (szPath));
 
-  strcat (szPath, LOGFILE);
+  strcat_s (szPath, sizeof (szPath), LOGFILE);
 
   va_start (ap, pszMessage);
-  vsprintf (szOut, pszMessage, ap);
+  vsprintf_s (szOut, sizeof (szOut), pszMessage, ap);
   va_end (ap);
 
   // Only write to it if the file already exists.
   if (bDebug)
   {
     // Now open the file for writing.
-    fp = fopen (szPath, "a");
-
-    if (!fp)
+    if (fopen_s (&fp, szPath, "a"))
     {
       return;
     }
 
 	  time (&aclock);                
 
-	  newtime = localtime (&aclock); 
+	  if (localtime_s(&newtime, &aclock))
+	  {
+		  sprintf_s(szLine, sizeof(szLine),
+				  "[ERROR] (%08x) ",
+				  GetCurrentThreadId());
+	  }
+	  else
+	  {
+		  sprintf_s(szLine, sizeof(szLine),
+			  "[%04d%02d%02d %02d:%02d:%02d] (%08x) ",
+			  newtime.tm_year + 1900,
+			  newtime.tm_mon + 1,
+			  newtime.tm_mday,
+			  newtime.tm_hour,
+			  newtime.tm_min,
+			  newtime.tm_sec,
+			  GetCurrentThreadId());
+	  }
 
-	  sprintf (szLine, "[%04d%02d%02d %02d:%02d:%02d] (%08x) ", 
-				  newtime->tm_year + 1900, 
-				  newtime->tm_mon + 1,
-				  newtime->tm_mday,
-				  newtime->tm_hour,
-				  newtime->tm_min,
-				  newtime->tm_sec,
-          GetCurrentThreadId ());
-
-    strcat (szLine, szOut);
+    strcat_s (szLine, sizeof (szLine), szOut);
 
     fprintf (fp, "%s\n", szLine);
 
@@ -176,7 +199,7 @@ void LogDebugMessage (
                   NULL ); // Display the string.
   
   va_start (ap, pszMessage);
-  vsprintf (szOut, pszMessage, ap);
+  vsprintf_s (szOut, sizeof (szOut), pszMessage, ap);
   va_end (ap);
 
 
@@ -190,7 +213,7 @@ void LogDebugMessage (
     *p = '\0';
   }
 
-  sprintf (szLine, "Debug: %s [%s]", szOut, lpMsgBuf); 
+  sprintf_s (szLine, sizeof (szLine), "Debug: %s [%s]", szOut, (char*) lpMsgBuf); 
 
   // Free the buffer.
   LocalFree (lpMsgBuf);
@@ -218,7 +241,7 @@ void LogDebugMessage (
                   NULL ); // Display the string.
   
   va_start (ap, pszMessage);
-  vsprintf (szOut, pszMessage, ap);
+  vsprintf_s (szOut, sizeof (szOut), pszMessage, ap);
   va_end (ap);
 
 
@@ -232,7 +255,7 @@ void LogDebugMessage (
     *p = '\0';
   }
 
-  sprintf (szLine, "Debug: %s [%s]", szOut, lpMsgBuf); 
+  sprintf_s (szLine, sizeof (szLine), "Debug: %s [%s]", szOut, (char*) lpMsgBuf); 
 
   // Free the buffer.
   LocalFree (lpMsgBuf);
@@ -245,20 +268,27 @@ BOOL FormatTime (
   char* pszBuffer,
   long  lSize)
 {
-	struct tm *newtime;
+	struct tm newtime;
 	time_t aclock;
+	BOOL rtn = FALSE;
+	errno_t err;
 
 	time (&aclock);                
 
-	newtime = localtime (&aclock); 
+	err = localtime_s (&newtime, &aclock);
 
-	_snprintf (pszBuffer, lSize, "%02d/%02d/%04d %02d:%02d:%02d", 
-				newtime->tm_mday,
-				newtime->tm_mon + 1,
-				newtime->tm_year + 1900, 
-				newtime->tm_hour,
-				newtime->tm_min,
-				newtime->tm_sec);
+	if (!err)
+	{
+		_snprintf_s(pszBuffer, lSize, lSize, "%02d/%02d/%04d %02d:%02d:%02d",
+			newtime.tm_mday,
+			newtime.tm_mon + 1,
+			newtime.tm_year + 1900,
+			newtime.tm_hour,
+			newtime.tm_min,
+			newtime.tm_sec);
 
-  return TRUE;
+		rtn = TRUE;
+	}
+
+	return rtn;
 }

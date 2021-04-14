@@ -110,7 +110,7 @@ void TallyWindow::UpdateMatches (void)
 //    pList->InsertItem (i, pstKeywordList[i].szKeyword);
 
     // Insert the match timestamp.
-    sprintf (szBuf, "%ld", pstKeywordList[i].dwMatches);
+    sprintf_s (szBuf, sizeof(szBuf), "%ld", pstKeywordList[i].dwMatches);
     pList->SetItemText(i, 1, szBuf);
 
     // Insert the match count.
@@ -164,7 +164,7 @@ void TallyWindow::FillList (
     pList->InsertItem (&lvi);
 
     // Insert the match timestamp.
-    sprintf (szBuf, "%ld", pstKeywordList[i].dwMatches);
+    sprintf_s (szBuf, sizeof(szBuf), "%ld", pstKeywordList[i].dwMatches);
     pList->SetItemText(i, 1, szBuf);
 
     // Insert the match count.

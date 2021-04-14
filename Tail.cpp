@@ -158,7 +158,8 @@ BOOL CTailApp::InitInstance()
 	//  the specific initialization routines you do not need.
 
 #ifdef _AFXDLL
-	Enable3dControls();			// Call this when using MFC in a shared DLL
+	// Now deprecated.
+	//Enable3dControls();			// Call this when using MFC in a shared DLL
 #else
 	Enable3dControlsStatic();	// Call this when linking to MFC statically
 #endif
@@ -168,7 +169,7 @@ BOOL CTailApp::InitInstance()
 	// such as the name of your company or organization.
 	SetRegistryKey(_T("Objektiv"));
 
-  VersionCheck ();
+//  VersionCheck ();
 
 	LoadStdProfileSettings();  // Load standard INI file options (including MRU)
 
@@ -256,30 +257,6 @@ BEGIN_MESSAGE_MAP(CAboutDlg, CDialog)
 	//{{AFX_MSG_MAP(CAboutDlg)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
-
-
-///////////////////////////////////////////////////////////////////////////////
-// VersionCheck
-//
-DWORD CTailApp::VersionCheck (
-	void)
-{
-	OSVERSIONINFO	osv;
-
-  osv.dwOSVersionInfoSize = sizeof (OSVERSIONINFO);
-    
-	if (!GetVersionEx (&osv))
-        return FALSE;
-  LogMessage ("Running on Windows %s %ld.%ld", 
-                    (osv.dwPlatformId == VER_PLATFORM_WIN32_NT ? "NT/2000/XP" : "95/98/Me"),
-                    osv.dwMajorVersion,
-                    osv.dwMinorVersion);
-
-  m_fVersion = osv.dwMajorVersion + ((float) osv.dwMinorVersion / 10);
-  m_dwPlatformID = osv.dwPlatformId;
-
-  return TRUE;
-}
 
 ///////////////////////////////////////////////////////////////////////////////
 // GetSettings

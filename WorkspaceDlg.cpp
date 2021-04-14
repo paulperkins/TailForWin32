@@ -66,7 +66,7 @@ CWorkspaceDlg::CWorkspaceDlg(CWnd* pParent /*=NULL*/)
 
   m_pDefaultWorkspace = new CWorkspace;
 
-  strcpy (m_pDefaultWorkspace->m_szName, "Non-Workspace Files");
+  strcpy_s (m_pDefaultWorkspace->m_szName, sizeof (m_pDefaultWorkspace->m_szName), "Non-Workspace Files");
 
   m_pWorkspaces = new CObList;
 
@@ -356,7 +356,7 @@ BOOL CWorkspaceDlg::AddWorkspaceFile (
 
 //  pDoc->m_pWorkspace = pWorkspace;
 
-  strcpy (pNewItem->m_szTailFile, pszFilename);
+  strcpy_s (pNewItem->m_szTailFile, sizeof (pNewItem->m_szTailFile), pszFilename);
 
   if (!pWorkspace)
   {
@@ -398,7 +398,7 @@ BOOL CWorkspaceDlg::AddWorkspaceFile (
 
   pNewItem->m_pView = pView;
 
-  strcpy (pNewItem->m_szTailFile, pszFilename);
+  strcpy_s (pNewItem->m_szTailFile, sizeof (pNewItem->m_szTailFile), pszFilename);
 
   if (!pWorkspace)
   {
@@ -518,7 +518,7 @@ BOOL CWorkspaceDlg::AddWorkspace (
 
   pNewItem = new CWorkspace;
 
-  strcpy (pNewItem->m_szName, pszName);
+  strcpy_s (pNewItem->m_szName, sizeof (pNewItem->m_szName), pszName);
 
   pNewItem->m_hti = m_Tree.AddTreeItem (m_htiRoot, 
                                 pszName, 
@@ -544,7 +544,7 @@ BOOL CWorkspaceDlg::AddNewWorkspace (
 {
   char szWkspName[1024] = "";
 
-  sprintf (szWkspName, "Workspace %ld", ++m_lAnonymousWorkspaceCount);
+  sprintf_s (szWkspName, sizeof (szWkspName), "Workspace %ld", ++m_lAnonymousWorkspaceCount);
 
   AddWorkspace (szWkspName);
 

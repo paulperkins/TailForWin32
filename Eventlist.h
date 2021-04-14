@@ -24,14 +24,14 @@ public:
   CTailEmailEvent ()
   {
     pEvent = NULL;
-    strcpy (szType, "E-Mail");
+    strcpy_s (szType, sizeof (szType), "E-Mail");
   }
 
   CTailEmailEvent (const char* pszName)
   {
     pEvent = NULL;
-    strcpy (szType, "E-Mail");
-    strcpy (szName, pszName);
+    strcpy_s (szType, sizeof (szType), "E-Mail");
+    strcpy_s (szName, sizeof (szName), pszName);
   }
 
 public:
